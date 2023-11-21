@@ -1,10 +1,21 @@
 import Heading from "../Heading"
-import React from "react"
-import {useSelector}  from "react-redux";
-import ProductCard from "../../../components/Common/Product/ProductCard"; 
+import React, {useState, useEffect} from "react"
+import {useSelector, useDispatch}  from "react-redux";
+import ProductCard from "../../../components/Common/Product/ProductCard";
+import HttpClient from "../../../services/HttpService"
+
 const HotProduct = () => {
+
+        const dispatch = useDispatch();
+        useEffect(() => {
+            HttpClient.getAllProducts().then(data => console.log(data));
+        }, [])
      
-         let TumUrunler =  useSelector((state)=> state.products.products);
+
+        let TumUrunler =  useSelector((state)=> state.products.products);
+        const thunkFunction = (dispatch, getState) => {
+            // logic here that can dispatch actions or read state
+          }
 
     return(
         <>

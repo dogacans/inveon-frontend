@@ -38,6 +38,10 @@ const productsSlice = createSlice({
             let urunDetay = state.products.find(item => item.id === parseInt(id))
             state.single = urunDetay
         },
+        getAllProducts: (state, action) => {
+            let products = state.products.products;
+            state.products.products = products;
+        },
         updateCart: (state, action) => {
             let { val, id } = action.payload;
             state.carts.forEach(item => {
