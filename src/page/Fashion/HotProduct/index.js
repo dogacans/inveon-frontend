@@ -8,15 +8,13 @@ import { selectAllProducts } from "../../../app/slices/product";
 const HotProduct = () => {
     const dispatch = useDispatch()
     const allProducts = useSelector(selectAllProducts)
-  
-    const productStatus = useSelector(state => state.products.status)
+    const productStatus = useSelector(state => state.products.productsStatus)
   
     useEffect(() => {
       if (productStatus === 'idle') {
         dispatch(fetchProducts())
       }
     }, [productStatus, dispatch])
-    console.log(allProducts)
     return(
         <>
         <section id="hot-Product_area" className="ptb-100">
@@ -49,7 +47,7 @@ const HotProduct = () => {
                             </div>
                             <div id="trending" className="tab-pane fade">
                             <div className="row">
-                               {allProducts.slice(3,5).map((urun,index)=> (
+                               {allProducts.map((urun,index)=> (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
                                     <ProductCard data={urun} />
                                     </div>
@@ -58,7 +56,7 @@ const HotProduct = () => {
                             </div>
                             <div id="best_sellers" className="tab-pane fade">
                             <div className="row">
-                               {allProducts.slice(4,7).map((urun,index)=> (
+                               {allProducts.map((urun,index)=> (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
                                     <ProductCard data={urun} />
                                     </div>
@@ -67,7 +65,7 @@ const HotProduct = () => {
                             </div>
                             <div id="featured" className="tab-pane fade">
                             <div className="row">
-                               {allProducts.slice(5,9).map((urun,index)=> (
+                               {allProducts.map((urun,index)=> (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
                                     <ProductCard data={urun} />
                                     </div>
@@ -75,13 +73,13 @@ const HotProduct = () => {
                                </div>
                             </div>
                             <div id="on_sall" className="tab-pane fade">
-                            <div className="row">
-                               {allProducts.slice(2,7).map((urun,index)=> (
-                                <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
-                                    <ProductCard data={urun} />
+                                <div className="row">
+                                {allProducts.map((urun,index)=> (
+                                    <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
+                                        <ProductCard data={urun} />
                                     </div>
-                               ))}
-                               </div>
+                                ))}
+                                </div>
                             </div>
                         </div>
                     </div>

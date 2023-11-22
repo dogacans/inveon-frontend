@@ -1,19 +1,31 @@
 import ProductInfo from './ProductInfo'
 import RelatedProduct from './RelatedProduct'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from 'react-router-dom';
 import { RatingStar } from "rating-star";
-
+import { fetchProductById, selectProductById }  from "../../../app/slices/product"
 const ProductDetailsTwo = () => {
     let dispatch = useDispatch();
     let { id } = useParams();
-    dispatch({ type: "products/getProductById", payload: { id } });
-    let product = useSelector((state) => state.products.single);
+    id = parseInt(id);
+    const product = useSelector(state => state.products.singleProduct)
+    const productStatus = useSelector(state => state.products.singleProductStatus)
+    
+    console.log("product:", product)
+    console.log("productStatus:", productStatus)
+    useEffect(() => {
+        if (productStatus === 'idle' && !product) {
+        console.log("fetching product")
+        dispatch(fetchProductById(id))
+        }
+    }, [productStatus, dispatch])
+    console.log(product)
+    
 
     // Add to cart
     const addToCart = async (id) => {
@@ -39,7 +51,7 @@ const ProductDetailsTwo = () => {
             setCount(0)
         }
     }
-    const [img, setImg] = useState(product.img)
+    const [img, setImg] = useState("/image.jpeg")
     const colorSwatch = (i) => {
         let data = product.color.find(item => item.color === i)
         setImg(data.img)
