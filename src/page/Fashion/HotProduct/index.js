@@ -1,22 +1,22 @@
 import Heading from "../Heading"
-import React, {useState, useEffect} from "react"
+import React, {useEffect} from "react"
 import {useSelector, useDispatch}  from "react-redux";
 import ProductCard from "../../../components/Common/Product/ProductCard";
-import HttpClient from "../../../services/HttpService"
+import { fetchProducts } from "../../../app/slices/product";
+import { selectAllProducts } from "../../../app/slices/product";
 
 const HotProduct = () => {
-
-        const dispatch = useDispatch();
-        useEffect(() => {
-            HttpClient.getAllProducts().then(data => console.log(data));
-        }, [])
-     
-
-        let TumUrunler =  useSelector((state)=> state.products.products);
-        const thunkFunction = (dispatch, getState) => {
-            // logic here that can dispatch actions or read state
-          }
-
+    const dispatch = useDispatch()
+    const allProducts = useSelector(selectAllProducts)
+  
+    const productStatus = useSelector(state => state.products.status)
+  
+    useEffect(() => {
+      if (productStatus === 'idle') {
+        dispatch(fetchProducts())
+      }
+    }, [productStatus, dispatch])
+    console.log(allProducts)
     return(
         <>
         <section id="hot-Product_area" className="ptb-100">
@@ -40,16 +40,16 @@ const HotProduct = () => {
                         <div className="tab-content">
                             <div id="new_arrival" className="tab-pane fade show in active">
                                 <div className="row">
-                               {TumUrunler.slice(0,4).map((urun,index)=> (
-                                <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
-                                    <ProductCard data={urun} />
+                               {allProducts.map((product)=> (
+                                <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={product.productId}>
+                                    <ProductCard data={product} />
                                     </div>
                                ))}
                                </div>
                             </div>
                             <div id="trending" className="tab-pane fade">
                             <div className="row">
-                               {TumUrunler.slice(3,5).map((urun,index)=> (
+                               {allProducts.slice(3,5).map((urun,index)=> (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
                                     <ProductCard data={urun} />
                                     </div>
@@ -58,7 +58,7 @@ const HotProduct = () => {
                             </div>
                             <div id="best_sellers" className="tab-pane fade">
                             <div className="row">
-                               {TumUrunler.slice(4,7).map((urun,index)=> (
+                               {allProducts.slice(4,7).map((urun,index)=> (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
                                     <ProductCard data={urun} />
                                     </div>
@@ -67,7 +67,7 @@ const HotProduct = () => {
                             </div>
                             <div id="featured" className="tab-pane fade">
                             <div className="row">
-                               {TumUrunler.slice(5,9).map((urun,index)=> (
+                               {allProducts.slice(5,9).map((urun,index)=> (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
                                     <ProductCard data={urun} />
                                     </div>
@@ -76,7 +76,7 @@ const HotProduct = () => {
                             </div>
                             <div id="on_sall" className="tab-pane fade">
                             <div className="row">
-                               {TumUrunler.slice(2,7).map((urun,index)=> (
+                               {allProducts.slice(2,7).map((urun,index)=> (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={index}>
                                     <ProductCard data={urun} />
                                     </div>

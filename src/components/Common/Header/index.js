@@ -9,9 +9,12 @@ import svg from '../../../assets/img/svg/cancel.svg'
 import logoWhite from '../../../assets/img/logo-white.png'
 import svgsearch from '../../../assets/img/svg/search.svg'
 import Swal from 'sweetalert2'
+import { selectAllCartItems } from '../../../app/slices/cart';
+import { selectAllFavorites } from '../../../app/slices/favorites';
 const Header = () => {
-    let carts = useSelector((state) => state.products.carts);
-    let favorites = useSelector((state) => state.products.favorites);
+
+    let carts = useSelector(selectAllCartItems);
+    let favorites = useSelector(selectAllFavorites);
     const [click, setClick] = useState(false);
     const history = useNavigate();
     let dispatch = useDispatch();
