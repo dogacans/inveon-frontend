@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 const initialState = {
   products: [],
   singleProduct: null,
+  singleProductStock: null,
   productsStatus: 'idle',
   singleProductStatus: 'idle',
   error: null
@@ -46,7 +47,8 @@ const productsSlice = createSlice({
             state.singleProductStatus = 'succeeded'
             // Add any fetched posts to the array
             console.log("sonuç: ", action.payload)
-            state.singleProduct = action.payload
+            state.singleProduct = action.payload.productData;
+            state.singleProductStock = action.payload.stockData;
           })
           .addCase(fetchProductById.rejected, (state, action) => {
             state.singleProductStatus = 'failed'

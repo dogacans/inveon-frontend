@@ -40,7 +40,7 @@ const HotProduct = () => {
                                 <div className="row">
                                {allProducts.map((product)=> (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={product.productId}>
-                                    <ProductCard data={product} />
+                                    <ProductCard product={product} />
                                     </div>
                                ))}
                                </div>
