@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from "react-redux";
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom"
+import userManager from '../../utils/userManager';
 
 const LoginArea = () => {
     let dispatch = useDispatch();
     const history = useNavigate()
+    console.log("doga")
 
     let status = useSelector((state) => state.user.status);
     let user = useSelector((state) => state.user.user);

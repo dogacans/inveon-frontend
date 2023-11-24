@@ -4,6 +4,7 @@ import {useSelector, useDispatch}  from "react-redux";
 import ProductCard from "../../../components/Common/Product/ProductCard";
 import { fetchProducts } from "../../../app/slices/product";
 import { selectAllProducts } from "../../../app/slices/product";
+import userManager from "../../../utils/userManager";
 
 const HotProduct = () => {
     const dispatch = useDispatch()
@@ -11,9 +12,10 @@ const HotProduct = () => {
     const productStatus = useSelector(state => state.products.productsStatus)
   
     useEffect(() => {
-      if (productStatus === 'idle') {
-        dispatch(fetchProducts())
-      }
+        userManager.getUser().then(data => console.log(data));
+        if (productStatus === 'idle') {
+            dispatch(fetchProducts())
+        }
     }, [productStatus, dispatch])
     return(
         <>
