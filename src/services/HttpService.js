@@ -20,8 +20,11 @@ class HttpService {
         }
     }
 
-    async getProductById (id) {
-        const response = await this.client.get(`products/${id}`);
+    async getProductById (id, access_token) {
+        const config = {
+            headers: { Authorization: `Bearer ${access_token}` }
+        };
+        const response = await this.client.get(`products/${id}`, config);
         if (response.status === 200) {
             return response.data.result;
         }

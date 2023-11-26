@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import userManager from "../../utils/userManager";
 
 const userSlice = createSlice({
     name: 'user',
@@ -9,10 +10,6 @@ const userSlice = createSlice({
     },
     reducers: {
         login: (state, action) => {
-            console.log("login received!!!!")
-            console.log('state: ', state);
-            console.log('action: ', action);
-
             state.status = action.payload.status
             state.loggedIn = action.payload.status
             //rest api den gelen veriye göre değiştirebilir. 
@@ -29,11 +26,16 @@ const userSlice = createSlice({
             }
         },
         logout: (state) => {
-            console.log("user slice logouta gelindi");
-            state.status = false
-            state.user = {
+            userManager.removeUser()
+                .then(data => {})
+                .catch(error => {
+                    console.error("Cannot log out!", error)
+                })
 
-            }
+            console.log("user slice logouta gelindi");
+            state.status = false;
+            state.loggedIn = false;
+            state.user = {}
         }
     }
 })
@@ -41,4 +43,4 @@ const userSlice = createSlice({
 const userReducer = userSlice.reducer
 export default userReducer
 
-export const userIsLoggedIn = (state) => state.user.loggedIn
+export const userIsLoggedIn = state => state.user.loggedIn

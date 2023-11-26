@@ -21,10 +21,15 @@ const productsSlice = createSlice({
             let urunDetay = state.products.find(item => item.id === parseInt(id))
             state.single = urunDetay
         },
-        getAllProducts: (state, action) => {
+        getAllProducts: (state) => {
             let products = state.products.products;
             state.products = products;
         },
+        resetProduct: (state) => {
+          state.singleProduct= null;
+          state.singleProductStock= null;
+          state.singleProductStatus= 'idle';
+        }
     },
     extraReducers(builder) {
         builder
@@ -65,7 +70,7 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
     return data
 })
 
-export const fetchProductById = createAsyncThunk('products/fetchProductById', async (id) => {
-    const data = await HttpService.getProductById(id);
-    return data;
+export const fetchProductById = createAsyncThunk('products/fetchProductById', async ({id, access_token}) => {
+  const data = await HttpService.getProductById(id, access_token);
+  return data;
 })

@@ -7,6 +7,10 @@ import './assets/css/animate.min.css';
 import './assets/css/color.css';
 import Callback from "./page/callback";
 import { loadUser } from "redux-oidc";
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from "react";
+import userManager from "./utils/userManager";
+import { userIsLoggedIn } from "./app/slices/user"
 const Fashion = loadable(() => pMinDelay(import('./page/'), 250), { fallback: <Loader /> });
 const Register = loadable(() => pMinDelay(import('./page/register'), 250), { fallback: <Loader /> });
 const ProductDetailsTwos = loadable(() => pMinDelay(import('./page/Product/product-details-two'), 250), { fallback: <Loader /> });
@@ -24,7 +28,33 @@ const CustomerAddress = loadable(() => pMinDelay(import('./page/my-account/custo
 const CustomerAccountDetails = loadable(() => pMinDelay(import('./page/my-account/customer-account-details'), 250), { fallback: <Loader /> });
 
 
+
 function App() {
+  
+  const dispatch = useDispatch();
+  
+  const loggedIn = useSelector(userIsLoggedIn);
+
+  useEffect(() => {
+    // Check if user exists in localStorage (saved by oidc-redux), log in if so
+    if (!loggedIn) {      
+      userManager.getUser()
+      .then(data => {
+        if (data) {
+          // Doing this to make sure data is serializable, otherwise it errors.
+          // i guess it has something to do with typescript typing.
+          let d = JSON.stringify(data);
+          let f = JSON.parse(d);
+          dispatch({ type: "user/login", payload: { user: f, status: true} })
+        }
+        else {
+          console.log("User does not exist in localStorage.")
+        }
+      })
+    }
+
+  }, [])
+
   return (
     <div >
       <BrowserRouter>

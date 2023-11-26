@@ -12,12 +12,11 @@ const CallbackPage = () => {
         console.log('successCallback');
         // get the user's previous location, passed during signinRedirect()
         const redirectPath = user.state.path;
-        const userProfile = {
-            name: user.profile.name,
-            role: user.profile.role,
-            email: user.profile.preferred_username
-        }    
-        dispatch({ type: "user/login", payload: { user: userProfile, status: true } })
+        // Doing this to make sure data is serializable, otherwise it errors.
+        // i guess it has something to do with typescript typing.
+        let d = JSON.stringify(user);
+        let f = JSON.parse(d);
+        dispatch({ type: "user/login", payload: { user: f, status: true } })
         navigate(redirectPath);
     };
 

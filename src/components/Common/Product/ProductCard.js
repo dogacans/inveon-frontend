@@ -4,16 +4,13 @@ import {Link} from "react-router-dom";
 import {AiOutlineHeart} from 'react-icons/ai';
 //Her bir ürünü temsil edecek
 const ProductCard = ({product}) => {
-        console.log(product)
-        let dispatch=  useDispatch();
+        let dispatch = useDispatch();
 
         const sepeteEkle = async(id) => {
-            console.log("tıklandı");
             dispatch({type :"products/AddToCart",payload : {id}})
         }
         
         const favorilereEkle = async(id) => {
-            console.log("tıklandı");
             dispatch({type :"products/addToFavorites",payload : {id}})
         }
 

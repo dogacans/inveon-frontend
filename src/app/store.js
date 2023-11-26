@@ -12,6 +12,5 @@ export const store = configureStore ( {
         cart: cartReducer,
         user : userReducer,
         settings : settingsReducer
-
     }
 })

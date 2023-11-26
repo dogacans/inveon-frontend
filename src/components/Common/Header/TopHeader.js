@@ -51,7 +51,7 @@ const TopHeader = () => {
                                             <li><Link to="/order-tracking"><i className="fa fa-truck">
                                             </i> Siparişinizi Takip Edin!</Link></li>
                                             <li className="after_login"><img src={avater} alt="avater" />
-                                                {user.name} <i className="fa fa-angle-down"></i>
+                                                {user.profile.name} <i className="fa fa-angle-down"></i>
                                                 <ul className="custom_dropdown">
                                                     <li><Link to="/my-account"><i className="fa fa-tachometer">
                                                     </i> Panel</Link></li>

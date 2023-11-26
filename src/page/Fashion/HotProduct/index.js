@@ -12,7 +12,6 @@ const HotProduct = () => {
     const productStatus = useSelector(state => state.products.productsStatus)
   
     useEffect(() => {
-        userManager.getUser().then(data => console.log(data));
         if (productStatus === 'idle') {
             dispatch(fetchProducts())
         }

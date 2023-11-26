@@ -17,18 +17,15 @@ const ProductDetailsTwo = () => {
     const product = useSelector(state => state.products.singleProduct)
     const productStock = useSelector(state => state.products.singleProductStock)
     const productStatus = useSelector(state => state.products.singleProductStatus)
-    
-    console.log("product:", product)
-    console.log("productStatus:", productStatus)
-    useEffect(() => {
-        if (productStatus === 'idle' && !product) {
-        console.log("fetching product")
-        dispatch(fetchProductById(id))
-        }
-    }, [productStatus, dispatch])
-    console.log(product)
-    
+    const user = useSelector(state => state.user.user)
 
+    useEffect(() => {
+        if ((productStatus === 'idle' && !product) || (product !== null && product.id !== id && productStatus === 'succeeded')) {
+            console.log("fetching product")
+            dispatch(fetchProductById({id: id, access_token: user.access_token}))
+        }
+    }, [dispatch])
+    
     // Add to cart
     const addToCart = async (id) => {
         dispatch({ type: "products/AddToCart", payload: { id } })
