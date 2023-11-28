@@ -4,21 +4,22 @@ import TotalCart from './TotalCart'
 import { Link } from 'react-router-dom'
 import img from '../../assets/img/common/empty-cart.png'
 import { useDispatch, useSelector } from "react-redux";
+import { selectAllCartItems } from "../../app/slices/cart";
 
 const CartArea = () => {
     let dispatch = useDispatch();
-    let carts = useSelector((state) => state.products.carts);
+    let carts = useSelector(selectAllCartItems);
     // Remove from Cart
     const rmProduct = (id) => {
-        dispatch({ type: "products/removeCart", payload: { id } });
+        dispatch({ type: "cart/removeCart", payload: { id } });
     }
     // Clear
     const clearCarts = () => {
-        dispatch({ type: "products/clearCart" });
+        dispatch({ type: "cart/clearCart" });
     }
     // Value Update
     const cartValUpdate = (val, id) => {
-        dispatch({ type: "products/updateCart", payload: { val, id } });
+        dispatch({ type: "cart/updateCart", payload: { val, id } });
     }
 
     return (

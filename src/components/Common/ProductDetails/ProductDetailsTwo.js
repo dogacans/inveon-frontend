@@ -9,11 +9,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from 'react-router-dom';
 import { RatingStar } from "rating-star";
 import { fetchProductById, selectProductById }  from "../../../app/slices/product"
+import { addToCart } from '../../../app/slices/cart';
+import Swal from "sweetalert2";
+
 const ProductDetailsTwo = () => {
 
     let dispatch = useDispatch();
+
     let { id } = useParams();
     id = parseInt(id);
+
     const product = useSelector(state => state.products.singleProduct)
     const productStock = useSelector(state => state.products.singleProductStock)
     const productStatus = useSelector(state => state.products.singleProductStatus)
@@ -25,20 +30,11 @@ const ProductDetailsTwo = () => {
             dispatch(fetchProductById({id: id, access_token: user.access_token}))
         }
     }, [dispatch])
-    
-    // Add to cart
-    const addToCart = async (id) => {
-        dispatch({ type: "products/AddToCart", payload: { id } })
-    }
 
-    // Add to Favorite
-    const addToFav = async (id) => {
-        dispatch({ type: "products/addToFavorites", payload: { id } })
-    }
-
- 
     // Quenty Inc Dec
+    const [size, setSize] = useState(null)
     const [count, setCount] = useState(1)
+
     const incNum = () => {
         if (count + 1 <= 5) { // TODO replace by stock count
             setCount(count + 1)
@@ -50,6 +46,30 @@ const ProductDetailsTwo = () => {
     const decNum = () => {
         if (count > 1)
             setCount(count - 1)
+    }
+
+    // Add to cart
+    const addProductToCart = async (id, size, count) => {
+        console.log('size: ', size);
+        if (!size) {
+            Swal.fire(
+                {
+                    title: 'Ürün Bedeni',
+                    text: "Lütfen beden seçin!",
+                    icon: 'error',
+                    showConfirmButton: true,
+                    timer: 2000
+                }
+            )
+            return;
+        }
+
+        dispatch(addToCart(id, size, count));
+    }
+
+    // Add to Favorite
+    const addToFav = async (id) => {
+        dispatch({ type: "products/addToFavorites", payload: { id } })
     }
 
     let settings = {
@@ -113,7 +133,11 @@ const ProductDetailsTwo = () => {
                                     <p>{product.description}</p>
                                     <div className="customs_selects">
                                         
-                                        <select name="product" className="customs_sel_box">
+                                        <select 
+                                            name="product" 
+                                            className="customs_sel_box"
+                                            onChange={(e) => setSize(e.target.value)}
+                                        >
                                             <option value="">Beden</option>
                                             {
                                                 productStock.map(stock => {
@@ -170,7 +194,7 @@ const ProductDetailsTwo = () => {
                                          
                                         </ul>
                                         <a href="#!" className="theme-btn-one btn-black-overlay btn_sm"
-                                         onClick={() => addToCart(product.productId)}>Sepete Ekle</a>
+                                         onClick={() => addProductToCart(product.productId, size, count)}>Sepete Ekle</a>
                                     </div>
 
                                 </div>

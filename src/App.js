@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from "react";
 import userManager from "./utils/userManager";
 import { userIsLoggedIn } from "./app/slices/user"
+import HttpService from "./services/HttpService";
 const Fashion = loadable(() => pMinDelay(import('./page/'), 250), { fallback: <Loader /> });
 const Register = loadable(() => pMinDelay(import('./page/register'), 250), { fallback: <Loader /> });
 const ProductDetailsTwos = loadable(() => pMinDelay(import('./page/Product/product-details-two'), 250), { fallback: <Loader /> });
@@ -51,6 +52,11 @@ function App() {
           console.log("User does not exist in localStorage.")
         }
       })
+
+      if (true) {
+        HttpService.getCart();
+      }
+
     }
 
   }, [])

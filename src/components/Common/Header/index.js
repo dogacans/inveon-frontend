@@ -20,7 +20,7 @@ const Header = () => {
     let dispatch = useDispatch();
 
     const rmCartProduct = (id) => {
-        dispatch({ type: "products/removeCart", payload: { id } });
+        dispatch({ type: "cart/removeCart", payload: { id } });
     }
 
     const rmFavProduct = (id) => {

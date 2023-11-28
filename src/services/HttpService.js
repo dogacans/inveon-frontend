@@ -1,17 +1,31 @@
 import axios from "axios";
-
+import userManager from "../utils/userManager"
 // const axios = require("axios");
 
 class HttpService {
     constructor () {
-        this.client = axios.create({
+        this.productsClient = axios.create({
             // baseURL: 'http://localhost:5001/' // gateway
             baseURL: 'http://localhost:5003/api'
         })
+
+        this.cartClient = axios.create({
+            // baseURL: 'http://localhost:5001/' // gateway
+            baseURL: 'http://localhost:5004/api/cart'
+        })
+
+        this.cartClient.interceptors.request.use(async (config) => {
+            const user = await userManager.getUser();
+            this.access_token = user.access_token;
+            config.headers.Authorization =  this.access_token ? `Bearer ${this.access_token}` : '';
+            return config;
+        });
+
+        this.access_token = null;
     }
 
     async getAllProducts () {
-        const response = await this.client.get("products");
+        const response = await this.productsClient.get("products");
         if (response.status === 200) {
             return response.data.result;
         }
@@ -24,7 +38,7 @@ class HttpService {
         const config = {
             headers: { Authorization: `Bearer ${access_token}` }
         };
-        const response = await this.client.get(`products/${id}`, config);
+        const response = await this.productsClient.get(`products/${id}`, config);
         if (response.status === 200) {
             return response.data.result;
         }
@@ -34,7 +48,7 @@ class HttpService {
     }
 
     async getAllProducts () {
-        const response = await this.client.get("products");
+        const response = await this.productsClient.get("products");
         if (response.status === 200) {
             return response.data.result;
         }
@@ -42,5 +56,31 @@ class HttpService {
             throw new Error("Cannot get all products!");
         }
     }
+
+    async addToCart (productId, size, count) {
+        const response = await this.cartClient.post("AddProductToCart", {
+            productId: productId, 
+            size: size, 
+            count: count
+        });
+        return (response.status === 200 && response.data.isSuccess)
+    }
+
+    async getCart () {
+        const response = await this.cartClient.get(`GetCart`);
+        if (response.status === 200) {
+            return response.data.result;
+        }
+        else {
+            throw new Error("Cannot get all products!");
+        }
+    }
+
+    // async setUserToken () {
+    //     const user = await userManager.getUser();
+    //     this.access_token = user.access_token;
+    //     this.cartClient.defaults.headers['Authorization'] = `Bearer ${this.access_token}`
+    // }
 }
+
 export default new HttpService();
