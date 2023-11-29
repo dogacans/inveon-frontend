@@ -13,15 +13,17 @@ class HttpService {
             // baseURL: 'http://localhost:5001/' // gateway
             baseURL: 'http://localhost:5004/api/cart'
         })
-
+        this.access_token = null;
+        
         this.cartClient.interceptors.request.use(async (config) => {
             const user = await userManager.getUser();
-            this.access_token = user.access_token;
+            if (user) {
+                this.access_token = user.access_token;
+            }
             config.headers.Authorization =  this.access_token ? `Bearer ${this.access_token}` : '';
             return config;
         });
-
-        this.access_token = null;
+        
     }
 
     async getAllProducts () {
@@ -68,6 +70,19 @@ class HttpService {
 
     async getCart () {
         const response = await this.cartClient.get(`GetCart`);
+        if (response.status === 200) {
+            return response.data.result;
+        }
+        else {
+            throw new Error("Cannot get all products!");
+        }
+    }
+    async deleteFromCart (productId, size) {
+        const response = await this.cartClient.delete(`DeleteProductFromCart`,
+        {
+            
+        }
+        );
         if (response.status === 200) {
             return response.data.result;
         }

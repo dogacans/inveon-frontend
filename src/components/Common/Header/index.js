@@ -11,20 +11,26 @@ import svgsearch from '../../../assets/img/svg/search.svg'
 import Swal from 'sweetalert2'
 import { selectAllCartItems } from '../../../app/slices/cart';
 import { selectAllFavorites } from '../../../app/slices/favorites';
+import { deleteFromCart } from '../../../app/slices/cart';
+
 const Header = () => {
 
     let carts = useSelector(selectAllCartItems);
+    console.log("Carts: ", carts);
     let favorites = useSelector(selectAllFavorites);
     const [click, setClick] = useState(false);
     const history = useNavigate();
     let dispatch = useDispatch();
 
-    const rmCartProduct = (id) => {
-        dispatch({ type: "cart/removeCart", payload: { id } });
+    const rmCartProduct = (id, size) => {
+        debugger
+        dispatch(deleteFromCart(id, size))
+        // dispatch({ type: "cart/removeFromCart", payload: { productId:id, size: size } });
     }
 
-    const rmFavProduct = (id) => {
-        dispatch({ type: "products/removeToFav", payload: { id } });
+    const rmFavProduct = (id, size) => {
+        
+        dispatch({ type: "products/removeToFav", payload: { productId:id, size: size } });
     }
 
     const cartTotal = () => {
@@ -318,7 +324,7 @@ const Header = () => {
                                 </div>
                                 <div className="offcanvas-wishlist-item-delete text-right">
                                     <a href="#!" className="offcanvas-wishlist-item-delete"
-                                        onClick={() => rmCartProduct(data.id)}>
+                                        onClick={() => rmCartProduct(data.productId, data.size)}>
                                         <i className="fa fa-trash"></i></a>
                                 </div>
                             </li>
@@ -373,7 +379,7 @@ const Header = () => {
                                 </div>
                                 <div className="offcanvas-wishlist-item-delete text-right">
                                     <a href="#!" className="offcanvas-wishlist-item-delete"
-                                        onClick={() => rmFavProduct(data.id)}><i className="fa fa-trash"></i></a>
+                                        onClick={() => rmFavProduct(data.productId, data.size)}><i className="fa fa-trash"></i></a>
                                 </div>
                             </li>
                         ))}

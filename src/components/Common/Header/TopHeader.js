@@ -40,7 +40,8 @@ const TopHeader = () => {
                                     !loggedIn ?
                                         <ul className="right_list_fix">
 
-                                            <li onClick={() => login()}>Giriş Yap</li>
+                                            <li onClick={() => login()}><Link to="#"><i className="fa fa-lock"></i>
+                                                Giriş Yap</Link></li>
                                             <li><Link to="/register"><i className="fa fa-lock"></i>
                                                 Kayıt Ol</Link></li>
                                         </ul>

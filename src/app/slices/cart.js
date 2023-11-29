@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
 import HttpService from "../../services/HttpService";
 import { fetchProductById } from "./product";
+import userManager from "../../utils/userManager";
 
 const initialState = {
   products: [],
@@ -16,14 +17,14 @@ const cartSlice = createSlice({
     reducers: {
         //sepete ürün eklemek için kullanılacak
         AddToCart: (state, action) => {
-            let { product, count } = action.payload;
+            let { product, count, size } = action.payload;
             let productInCart = state.products.find(item => item.id === product.id)
             try {
                 if (productInCart) {
                     productInCart.quantity += count;
                 }
                 else {
-                    state.products.push({...product, quantity: count});
+                    state.products.push({...product, quantity: count, size: size});
                 }
                 
                 
@@ -57,9 +58,9 @@ const cartSlice = createSlice({
                 }
             })
         },
-        removeCart: (state, action) => {
-            let { id } = action.payload;
-            let sepetinOnSonHali = state.carts.filter(item => item.id !== parseInt(id))
+        removeFromCart: (state, action) => {
+            let { cartDetailsId } = action.payload;
+            let sepetinOnSonHali = state.products.filter(item => item.cartDetailsId !== cartDetailsId)
             state.carts = sepetinOnSonHali
         },
         //sepeti comple silmek için
@@ -81,6 +82,19 @@ export function addToCart(id, size, count) {
         // you can use api and something else here
         const state = getState();
         let product = null;
+        const user = await userManager.getUser();
+        if (!user) {
+            Swal.fire(
+                {
+                    title: 'Üye Girişi',
+                    text: "Lütfen üye girişi yapınız!",
+                    icon: 'warning',
+                    showConfirmButton: true
+                }
+            )
+            return;
+            }
+
         if (state.products.singleProduct?.productId === id) {
             product = state.products.singleProduct
         }
@@ -104,6 +118,43 @@ export function addToCart(id, size, count) {
                 }
             )
         }
-        
+    }
+  }
+
+
+export function deleteFromCart(productId, size) {
+    return async (dispatch, getState) => {
+        // you can use api and something else here
+        const state = getState();
+
+        const user = await userManager.getUser();
+        if (!user) {
+            Swal.fire(
+                {
+                    title: 'Üye Girişi',
+                    text: "Lütfen üye girişi yapınız!",
+                    icon: 'warning',
+                    showConfirmButton: true
+                }
+            )
+            return;
+            }
+
+        const success = await HttpService.deleteFromCart(productId, size)
+
+        if (success) {
+            dispatch({ type: "cart/removeFromCart", payload: { productId: productId, size: size } })
+        }
+        else {
+            Swal.fire(
+                {
+                    title: 'Başarısız oldum...',
+                    text: "Ürün sepetten silinemedi :(",
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000
+                }
+            )
+        }
     }
   }
