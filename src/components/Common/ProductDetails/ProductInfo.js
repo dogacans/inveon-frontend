@@ -1,50 +1,34 @@
-import React from 'react'
-// import Img
-import user1 from '../../../assets/img/user/user1.png'
-import user2 from '../../../assets/img/user/user2.png'
-import user3 from '../../../assets/img/user/user3.png'
+import React, { useEffect, useState } from 'react'
+import {fetchReviews, postReviewAsync} from "../../../app/slices/reviews" 
+import { useSelector, useDispatch } from 'react-redux'; 
 
-const ReviewData = [
-    {
-        img: user1,
-        name: "Sara Anela",
-        date: "5 days ago",
-        replay: "Replay",
-        report: "Report",
-        para: `Cras sit amet nibh libero, in gravida nulla. Nulla vel metus
-        scelerisque Praesent sapien massa, convallis a pellentesque nec,
-        egestas non nisi. Cras ultricies ligula sed magna dictum porta.
-        Vestibulum ac diam sit amet quam vehicula elementum sed sit amet
-        dui. Vivamus magna justo.`
-    },
-    {
-        img: user2,
-        name: "Sara Anela",
-        date: "5 days ago",
-        replay: "Replay",
-        report: "Report",
-        para: `Cras sit amet nibh libero, in gravida nulla. Nulla vel metus
-        scelerisque Praesent sapien massa, convallis a pellentesque nec,
-        egestas non nisi. Cras ultricies ligula sed magna dictum porta.
-        Vestibulum ac diam sit amet quam vehicula elementum sed sit amet
-        dui. Vivamus magna justo.`
-    },
-    {
-        img: user3,
-        name: "Sara Anela",
-        date: "5 days ago",
-        replay: "Replay",
-        report: "Report",
-        para: `Cras sit amet nibh libero, in gravida nulla. Nulla vel metus
-        scelerisque Praesent sapien massa, convallis a pellentesque nec,
-        egestas non nisi. Cras ultricies ligula sed magna dictum porta.
-        Vestibulum ac diam sit amet quam vehicula elementum sed sit amet
-        dui. Vivamus magna justo.`
-    },
+const ProductInfo = ({productId}) => {
 
-]
+    const dispatch = useDispatch();
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const { reviews, status, error } = useSelector((state) => state.reviews);
+    const ReviewData = reviews ?? [];
 
-const ProductInfo = () => {
+    useEffect(() => {
+        dispatch(fetchReviews(productId));
+    }, [dispatch]);
+    
+    const handleRatingChange = (event) => {
+        setRating(parseInt(event.target.value, 10));
+      };
+    
+      const handleCommentChange = (event) => {
+        setComment(event.target.value);
+      };
+    
+      const handleSubmit = (event) => {
+        event.preventDefault()
+        dispatch(postReviewAsync({productId, rating, comment}))
+        setRating(0);
+        setComment('');
+      };
+
     return (
         <>
             <div className="row">
@@ -93,38 +77,64 @@ const ProductInfo = () => {
                                 </div>
                             </div>
                             <div id="review" className="tab-pane fade">
+                            <div className="review-form">
+                                <h2>Write a Review</h2>
+                                <form onSubmit={handleSubmit}>
+                                    <div className='d-flex flex-column mt-3'>
+                                    <label htmlFor="rating">Rating:</label>
+                                    <select id="rating" value={rating} onChange={handleRatingChange}>
+                                        <option value={0}>Select Rating</option>
+                                        <option value={1}>1 - Poor</option>
+                                        <option value={2}>2 - Fair</option>
+                                        <option value={3}>3 - Good</option>
+                                        <option value={4}>4 - Very Good</option>
+                                        <option value={5}>5 - Excellent</option>
+                                    </select>
+                                    </div>
+                                    <div className='d-flex flex-column mt-3'>
+                                    <label htmlFor="comment">Comment:</label>
+                                    <textarea
+                                        id="comment"
+                                        value={comment}
+                                        onChange={handleCommentChange}
+                                        rows={4}
+                                    ></textarea>
+                                    </div>
+                                    <button type="submit" className='mt-3'>Submit Review</button>
+                                </form>
+                            </div>  
                                 <div className="product_reviews">
-                                    <ul>
-                                        {ReviewData.map((data, index) => (
-                                            <li className="media" key={index}>
-                                                <div className="media-img">
-                                                    <img src={data.img} alt="img" />
-                                                </div>
-                                                <div className="media-body">
-                                                    <div className="media-header">
-                                                        <div className="media-name">
-                                                            <h4>{data.name}</h4>
-                                                            <p>{data.date}</p>
+                                    {!!ReviewData.length &&
+                                        <ul>
+                                            <li>Here are the reviews:</li>
+                                            {ReviewData.map((data, index) => (
+                                                <li className="media" key={index}>
+                                                    <div className="media-img">
+                                                        {/* <img src={data.img} alt="img" /> */}
+                                                    </div>
+                                                    <div className="media-body">
+                                                        <div className="media-header">
+                                                            <div className="media-name">
+                                                                <h4>{data.userId}</h4>
+                                                                <p>{new Date(data.timestamp).toLocaleDateString()}</p>
+                                                            </div>
+                                                            <div className="product_review_strat d-flex">
+                                                                <div className="mr-2">{data.rating}</div>
+                                                                <div><i className="fa fa-star"></i></div>
+                                                            </div>
                                                         </div>
-                                                        <div className="post-share">
-                                                            <a href="#!" className="replay">{data.replay}</a>
-                                                            <a href="#!" className="">{data.report}</a>
+                                                        <div className="media-pragraph">
+                                                            <p>{data.comment}</p>
                                                         </div>
                                                     </div>
-                                                    <div className="media-pragraph">
-                                                        <div className="product_review_strat">
-                                                            <span><a href="#!"><i className="fa fa-star"></i></a></span>
-                                                            <span><a href="#!"><i className="fa fa-star"></i></a></span>
-                                                            <span><a href="#!"><i className="fa fa-star"></i></a></span>
-                                                            <span><a href="#!"><i className="fa fa-star"></i></a></span>
-                                                            <span><a href="#!"><i className="fa fa-star"></i></a></span>
-                                                        </div>
-                                                        <p>{data.para}</p>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    }
+                                    {
+                                        !!!ReviewData.length && 
+                                        <div> There are no reviews for this product, yet.</div>
+                                    }
                                 </div>
                             </div>
                         </div>

@@ -67,6 +67,9 @@ function App() {
         }
       })
     }
+    else {
+      // TODO check if user token is not expired here
+    }
   }, [])
 
   return (

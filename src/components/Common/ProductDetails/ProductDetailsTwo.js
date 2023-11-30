@@ -201,7 +201,7 @@ const ProductDetailsTwo = () => {
                             </div>
                         </div>
                     </div>
-                    <ProductInfo />
+                    <ProductInfo productId={id}/>
                 </div>
             </section>
             :

@@ -13,9 +13,24 @@ class HttpService {
             // baseURL: 'http://localhost:5001/' // gateway
             baseURL: 'http://localhost:5004/api/cart'
         })
+
+        this.reviewsClient = axios.create({
+            // baseURL: 'http://localhost:5001/' // gateway
+            baseURL: 'http://localhost:5007/api'
+        })
+
         this.access_token = null;
         
         this.cartClient.interceptors.request.use(async (config) => {
+            const user = await userManager.getUser();
+            if (user) {
+                this.access_token = user.access_token;
+            }
+            config.headers.Authorization =  this.access_token ? `Bearer ${this.access_token}` : '';
+            return config;
+        });
+
+        this.reviewsClient.interceptors.request.use(async (config) => {
             const user = await userManager.getUser();
             if (user) {
                 this.access_token = user.access_token;
@@ -82,6 +97,36 @@ class HttpService {
             {data: {productId,size}}
         );
         return (response.status === 200 && response.data.isSuccess)
+    }
+
+    async getReviews (productId) {
+        const response = await this.reviewsClient.get(`reviews/${productId}`);
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            throw new Error(`Cannot get reviews for product: ${productId}`);
+        }
+    }
+
+    async postReview(productId, review) {
+        try {
+            const postData = {
+                ProductId: productId,
+                Comment: review.comment,
+                Rating: review.rating
+            };
+    
+            const response = await this.reviewsClient.post(`addReview`, postData);
+            if (response.status === 200) {
+                return response.data;
+            } else {
+                throw new Error(`Cannot post review for product: ${productId}`);
+            }
+        } catch (error) {
+            console.error('Error posting review:', error.message);
+            throw error;
+        }
     }
 
     // async setUserToken () {
