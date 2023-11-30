@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import userManager from "./utils/userManager";
 import { userIsLoggedIn } from "./app/slices/user"
 import HttpService from "./services/HttpService";
+import { showInCart } from "./app/slices/cart";
 const Fashion = loadable(() => pMinDelay(import('./page/'), 250), { fallback: <Loader /> });
 const Register = loadable(() => pMinDelay(import('./page/register'), 250), { fallback: <Loader /> });
 const ProductDetailsTwos = loadable(() => pMinDelay(import('./page/Product/product-details-two'), 250), { fallback: <Loader /> });
@@ -35,12 +36,24 @@ function App() {
   const dispatch = useDispatch();
   
   const loggedIn = useSelector(userIsLoggedIn);
+  const cartItems = useSelector(state => state.cart.products.length);
 
   useEffect(() => {
+    const setCartItems = async () => {
+      if (cartItems) {
+        return;
+      }
+      let cart = await HttpService.getCart();
+      cart.forEach((prod) => {
+        dispatch(showInCart(prod.productId, prod.size, prod.count))
+        })
+    }
+    setCartItems()
     // Check if user exists in localStorage (saved by oidc-redux), log in if so
-    if (!loggedIn) {      
+    if (!loggedIn) {
+      
       userManager.getUser()
-      .then(data => {
+      .then(async data => {
         if (data) {
           // Doing this to make sure data is serializable, otherwise it errors.
           // i guess it has something to do with typescript typing.
@@ -49,16 +62,11 @@ function App() {
           dispatch({ type: "user/login", payload: { user: f, status: true} })
         }
         else {
+          
           console.log("User does not exist in localStorage.")
         }
       })
-
-      if (true) {
-        HttpService.getCart();
-      }
-
     }
-
   }, [])
 
   return (

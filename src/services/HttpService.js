@@ -79,16 +79,9 @@ class HttpService {
     }
     async deleteFromCart (productId, size) {
         const response = await this.cartClient.delete(`DeleteProductFromCart`,
-        {
-            
-        }
+            {data: {productId,size}}
         );
-        if (response.status === 200) {
-            return response.data.result;
-        }
-        else {
-            throw new Error("Cannot get all products!");
-        }
+        return (response.status === 200 && response.data.isSuccess)
     }
 
     // async setUserToken () {

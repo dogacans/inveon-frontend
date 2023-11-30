@@ -23,7 +23,6 @@ const Header = () => {
     let dispatch = useDispatch();
 
     const rmCartProduct = (id, size) => {
-        debugger
         dispatch(deleteFromCart(id, size))
         // dispatch({ type: "cart/removeFromCart", payload: { productId:id, size: size } });
     }

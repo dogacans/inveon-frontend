@@ -18,7 +18,8 @@ const cartSlice = createSlice({
         //sepete ürün eklemek için kullanılacak
         AddToCart: (state, action) => {
             let { product, count, size } = action.payload;
-            let productInCart = state.products.find(item => item.id === product.id)
+            console.log('action.payload: ', action.payload);
+            let productInCart = state.products.find(item => item.productId === product.productId && item.size === product.size)
             try {
                 if (productInCart) {
                     productInCart.quantity += count;
@@ -50,6 +51,15 @@ const cartSlice = createSlice({
                 )
             }
         },
+        showInCart: (state, action) => {
+            let { product, count, size } = action.payload;
+            console.log('action.payload: ', action.payload);
+            state.products.push({
+                ...product,
+                count: count, 
+                size: size
+            })
+        },
         updateCart: (state, action) => {
             let { val, id } = action.payload;
             state.carts.forEach(item => {
@@ -59,13 +69,14 @@ const cartSlice = createSlice({
             })
         },
         removeFromCart: (state, action) => {
-            let { cartDetailsId } = action.payload;
-            let sepetinOnSonHali = state.products.filter(item => item.cartDetailsId !== cartDetailsId)
-            state.carts = sepetinOnSonHali
+            let { productId, size } = action.payload;
+            console.log('state.products: ', state.products);
+            let filteredCart = state.products.filter(item => !(item.size === size && item.productId === productId))
+            state.products= filteredCart
         },
         //sepeti comple silmek için
         clearCart: (state) => {
-            state.carts = []
+            state.products = []
         },
     }
 })
@@ -117,6 +128,25 @@ export function addToCart(id, size, count) {
                     timer: 2000
                 }
             )
+        }
+    }
+  }
+
+export function showInCart(id, size, count) {
+    return async (dispatch, getState) => {
+        // you can use api and something else here
+        const state = getState();
+        let product = null;
+
+        if (state.products.singleProduct?.productId === id) {
+            product = state.products.singleProduct
+        }
+        else {
+            product = state.products.products.find(prod => prod.productId === id)
+        }
+
+        if (product) {
+            dispatch({ type: "cart/showInCart", payload: { product, size, count } })
         }
     }
   }
