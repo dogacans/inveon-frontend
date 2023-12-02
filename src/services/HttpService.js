@@ -5,18 +5,19 @@ import userManager from "../utils/userManager"
 class HttpService {
     constructor () {
         this.productsClient = axios.create({
-            // baseURL: 'http://localhost:5001/' // gateway
             baseURL: 'http://localhost:5003/api'
         })
 
         this.cartClient = axios.create({
-            // baseURL: 'http://localhost:5001/' // gateway
             baseURL: 'http://localhost:5004/api/cart'
         })
 
         this.reviewsClient = axios.create({
-            // baseURL: 'http://localhost:5001/' // gateway
             baseURL: 'http://localhost:5007/api'
+        })
+
+        this.favoritesClient = axios.create({
+            baseURL: 'http://localhost:5008/api'
         })
 
         this.access_token = null;
@@ -31,6 +32,15 @@ class HttpService {
         });
 
         this.reviewsClient.interceptors.request.use(async (config) => {
+            const user = await userManager.getUser();
+            if (user) {
+                this.access_token = user.access_token;
+            }
+            config.headers.Authorization =  this.access_token ? `Bearer ${this.access_token}` : '';
+            return config;
+        });
+
+        this.favoritesClient.interceptors.request.use(async (config) => {
             const user = await userManager.getUser();
             if (user) {
                 this.access_token = user.access_token;
@@ -92,6 +102,37 @@ class HttpService {
             throw new Error("Cannot get all products!");
         }
     }
+
+    async getFavorites () {
+        const response = await this.favoritesClient.get(`getFavorites`);
+        if (response.status === 200) {
+            return response.data;
+        }
+        else {
+            throw new Error("Cannot get all products!");
+        }
+    }
+
+    async addToFavorites (productId) {
+        const response = await this.favoritesClient.post(`addFavorite`, {productId});
+        if (response.status === 200) {
+            return response.data.result;
+        }
+        else {
+            throw new Error("Cannot add item to favorites!");
+        }
+    }
+
+    async removeFromFavorites (productId) {
+        const response = await this.favoritesClient.delete(`deleteFromFavorites`, {data: {productId}});
+        if (response.status === 200) {
+            return response.data.result;
+        }
+        else {
+            throw new Error("Cannot delete item from favorites!");
+        }
+    }
+
     async deleteFromCart (productId, size) {
         const response = await this.cartClient.delete(`DeleteProductFromCart`,
             {data: {productId,size}}
@@ -129,11 +170,11 @@ class HttpService {
         }
     }
 
-    // async setUserToken () {
-    //     const user = await userManager.getUser();
-    //     this.access_token = user.access_token;
-    //     this.cartClient.defaults.headers['Authorization'] = `Bearer ${this.access_token}`
-    // }
+    async setUserToken () {
+        const user = await userManager.getUser();
+        this.access_token = user.access_token;
+        this.cartClient.defaults.headers['Authorization'] = `Bearer ${this.access_token}`
+    }
 }
 
 export default new HttpService();

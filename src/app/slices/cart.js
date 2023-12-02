@@ -1,8 +1,6 @@
-import { ProductData } from "../data/ProductData";
 import Swal from "sweetalert2";
-import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import HttpService from "../../services/HttpService";
-import { fetchProductById } from "./product";
 import userManager from "../../utils/userManager";
 
 const initialState = {
@@ -78,7 +76,34 @@ const cartSlice = createSlice({
         clearCart: (state) => {
             state.products = []
         },
-    }
+    },
+    extraReducers(builder) {
+        builder
+          .addCase(getCart.pending, (state, action) => {
+            state.status = 'loading'
+          })
+          .addCase(getCart.fulfilled, (state, action) => {
+            state.status = 'succeeded'
+            // Add any fetched posts to the array
+            const {cartItems, products} = action.payload
+            state.products = cartItems.map(item => {
+
+                const product = products.find(product => product.productId === item.productId)
+                return (
+                    {
+                        ...product,
+                        productId: item.productId,
+                        quantity: item.count,
+                        size: item.size
+                    }
+                )
+            });
+          })
+          .addCase(getCart.rejected, (state, action) => {
+            state.status = 'failed'
+            state.error = action.error.message
+          })
+      }
 })
 export default cartSlice.reducer
 export const selectAllCartItems = state => state.cart.products
@@ -132,25 +157,34 @@ export function addToCart(id, size, count) {
     }
   }
 
-export function showInCart(id, size, count) {
-    return async (dispatch, getState) => {
-        // you can use api and something else here
-        const state = getState();
-        let product = null;
+// export function ccCart() {
+//     return async (dispatch, getState) => {
+//         // you can use api and something else here
+//         const state = getState();
 
-        if (state.products.singleProduct?.productId === id) {
-            product = state.products.singleProduct
-        }
-        else {
-            product = state.products.products.find(prod => prod.productId === id)
-        }
+//         const cart = await getCart();
+//         cart.map(item => {
+//             let product = null;
+    
+//             if (state.products.singleProduct?.productId === item.productId) {
+//                 product = state.products.singleProduct
+//             }
+//             else {
+//                 product = state.products.products.find(prod => prod.productId === item.productId)
+//             }
+    
+//             if (product) {
+//                 dispatch({ type: "cart/showInCart", payload: { ...product, size: item.size, quantity: item.count } })
+//             }
+//         })
+//     }
+//   }
 
-        if (product) {
-            dispatch({ type: "cart/showInCart", payload: { product, size, count } })
-        }
-    }
-  }
-
+export const getCart = createAsyncThunk('cart/getCartItems', async () => {
+        const data = await HttpService.getCart();
+        const products = await HttpService.getAllProducts();
+        return {cartItems: data, products: products}
+})
 
 export function deleteFromCart(productId, size) {
     return async (dispatch, getState) => {

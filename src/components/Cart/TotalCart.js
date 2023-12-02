@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useSelector } from "react-redux";
 
 const TotalCart = (props) => {
-    let carts = useSelector((state) => state.products.carts);
+    let carts = useSelector((state) => state.cart.products);
 
     const cartTotal = () => {
         return carts.reduce(function (total, item) {
@@ -47,7 +47,7 @@ const TotalCart = (props) => {
                         <div className="coupon_inner">
                             <div className="cart_subtotal">
                                 <p>Alt Toplam : </p>
-                                <p className="cart_amount">{cartTotal()}.00 TL</p>
+                                <p className="cart_amount">{cartTotal()} TL</p>
                             </div>
                             <div className="cart_subtotal ">
                                 <p>Kargo</p>
@@ -57,7 +57,7 @@ const TotalCart = (props) => {
 
                             <div className="cart_subtotal">
                                 <p>Toplam</p>
-                                <p className="cart_amount">{cartTotal()}.00 TL</p>
+                                <p className="cart_amount">{cartTotal()} TL</p>
                             </div>
                             <div className="checkout_btn">
 

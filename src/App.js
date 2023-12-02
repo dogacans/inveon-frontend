@@ -12,7 +12,8 @@ import { useEffect } from "react";
 import userManager from "./utils/userManager";
 import { userIsLoggedIn } from "./app/slices/user"
 import HttpService from "./services/HttpService";
-import { showInCart } from "./app/slices/cart";
+import { ccCart, getCart } from "./app/slices/cart";
+import { getFavorites } from "./app/slices/favorites";
 const Fashion = loadable(() => pMinDelay(import('./page/'), 250), { fallback: <Loader /> });
 const Register = loadable(() => pMinDelay(import('./page/register'), 250), { fallback: <Loader /> });
 const ProductDetailsTwos = loadable(() => pMinDelay(import('./page/Product/product-details-two'), 250), { fallback: <Loader /> });
@@ -37,21 +38,12 @@ function App() {
   
   const loggedIn = useSelector(userIsLoggedIn);
   const cartItems = useSelector(state => state.cart.products.length);
+  let products = useSelector(state => state.products.products);
 
   useEffect(() => {
-    const setCartItems = async () => {
-      if (cartItems) {
-        return;
-      }
-      let cart = await HttpService.getCart();
-      cart.forEach((prod) => {
-        dispatch(showInCart(prod.productId, prod.size, prod.count))
-        })
-    }
-    setCartItems()
+    dispatch(getCart())
     // Check if user exists in localStorage (saved by oidc-redux), log in if so
     if (!loggedIn) {
-      
       userManager.getUser()
       .then(async data => {
         if (data) {
@@ -70,7 +62,15 @@ function App() {
     else {
       // TODO check if user token is not expired here
     }
-  }, [])
+
+    setTimeout(() => {
+      dispatch(getCart(products))
+    }, 1000)
+    setTimeout(() => {
+      dispatch(getFavorites())
+    }, 1000)
+
+  }, [dispatch])
 
   return (
     <div >

@@ -5,7 +5,7 @@ import img from '../../assets/img/common/empty-cart.png'
 
 const WishArea = () => {
     let dispatch = useDispatch();
-    let favorilerdekiUrunler = useSelector((state) => state.products.favorites);
+    let favorilerdekiUrunler = useSelector((state) => state.favorites.products);
     // Remove from Cart
     const rmProduct = (id) => {
         dispatch({ type: "products/removeToFav", payload: { id } });
@@ -52,7 +52,7 @@ const WishArea = () => {
                                                                 {data.title}
                                                             </Link>
                                                         </td>
-                                                        <td className="product-price">{data.price}.00 TL</td>
+                                                        <td className="product-price">{data.price} TL</td>
 
                                                     </tr>
                                                 ))

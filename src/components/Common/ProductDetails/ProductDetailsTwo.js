@@ -11,6 +11,7 @@ import { RatingStar } from "rating-star";
 import { fetchProductById, selectProductById }  from "../../../app/slices/product"
 import { addToCart } from '../../../app/slices/cart';
 import Swal from "sweetalert2";
+import { addToFavorites, removeFromFavorites, selectAllFavorites } from '../../../app/slices/favorites';
 
 const ProductDetailsTwo = () => {
 
@@ -22,6 +23,7 @@ const ProductDetailsTwo = () => {
     const product = useSelector(state => state.products.singleProduct)
     const productStock = useSelector(state => state.products.singleProductStock)
     const productStatus = useSelector(state => state.products.singleProductStatus)
+    const favorites = useSelector(selectAllFavorites)
     const user = useSelector(state => state.user.user)
 
     useEffect(() => {
@@ -68,8 +70,13 @@ const ProductDetailsTwo = () => {
     }
 
     // Add to Favorite
-    const addToFav = async (id) => {
-        dispatch({ type: "products/addToFavorites", payload: { id } })
+    const addToFav = async (productId) => {
+        if (!!!favorites.find(fav => fav.productId === id)) {
+            dispatch(addToFavorites(productId))
+        }
+        else {
+            dispatch(removeFromFavorites(productId))
+        }
     }
 
     let settings = {
@@ -189,7 +196,7 @@ const ProductDetailsTwo = () => {
                                         <ul>
                                             <li>
                                                 <a href="#!" className="action wishlist" title="Wishlist" onClick={() => addToFav(product.productId)}><i
-                                                    className="fa fa-heart"></i>Favorilere Ekle</a>
+                                                    className="fa fa-heart"></i>{!!favorites.find(fav => fav.productId === id) ? "Favorilerden Sil" : "Favorilere Ekle"}</a>
                                             </li>
                                          
                                         </ul>
