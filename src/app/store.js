@@ -5,8 +5,10 @@ import userReducer from "./slices/user";
 import favoritesReducer from "./slices/favorites"
 import cartReducer from "./slices/cart"
 import reviewsReducer from "./slices/reviews"
+import { loadUser } from "redux-oidc";
+import userManager from "../utils/userManager";
 
-export const store = configureStore ( {
+const store = configureStore ( {
     reducer : {
         products : productsReducer,
         favorites: favoritesReducer,
@@ -16,3 +18,6 @@ export const store = configureStore ( {
         settings : settingsReducer
     }
 })
+
+loadUser(store, userManager);
+export default store

@@ -107,6 +107,13 @@ const cartSlice = createSlice({
 })
 export default cartSlice.reducer
 export const selectAllCartItems = state => state.cart.products
+export const selectTotalCartCost = state => {
+    let cartTotal = state.cart.products?.reduce((totalPrice , product) => {
+        totalPrice += product.price * product.quantity
+        return totalPrice
+    }, 0)
+    return Number((cartTotal).toFixed(2))
+}
 
 // export const fetchCart = createAsyncThunk('products/fetchProducts', async () => {
 //     const products = getState();

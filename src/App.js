@@ -47,6 +47,11 @@ function App() {
       userManager.getUser()
       .then(async data => {
         if (data) {
+          if (data.expired) {
+            await userManager.removeUser();
+            const customState = { path: window.location };
+            await userManager.signinRedirect({ state: customState });
+          }
           // Doing this to make sure data is serializable, otherwise it errors.
           // i guess it has something to do with typescript typing.
           let d = JSON.stringify(data);

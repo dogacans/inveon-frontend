@@ -1,41 +1,64 @@
-import React from 'react'
-import {Link} from "react-router-dom";
-const YourOrder = () => {
+import React from 'react';
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch }  from "react-redux";
+import { selectAllCartItems, selectTotalCartCost } from '../../app/slices/cart';
+
+const YourOrder = (props) => {
+    const cartProducts = useSelector(selectAllCartItems)
+    const cartTotal = useSelector(selectTotalCartCost)
+    const shippingCost = 15.00;
+    const totalSum = Number((cartTotal + shippingCost).toFixed(2))
+
     return (
         <>
             <div className="col-lg-6 col-md-6">
                 <h3>Siparişiniz</h3>
                 <div className="order_table table-responsive">
-                    <table>
+                    <table className='table text-nowrap'>
                         <thead>
                             <tr>
+                                <th>Adet</th>
                                 <th>Ürün</th>
+                                <th></th>
                                 <th>Toplam</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td> green Dress For Woman <strong> × 1</strong></td>
-                                <td> 100.00 TL</td>
-                            </tr>
-                            <tr>
-                                <td> V-Neck Dress <strong> × 1</strong></td>
-                                <td> 50.00 TL</td>
-                            </tr>
-                          
+                                {cartProducts.map(product => {
+                                    return (
+                                        <tr>
+                                            <td style={{width: "30%"}}className='col-2' colSpan={1}>{product.quantity} </td>
+                                            <td style={{width: "40%"}}colSpan={2}>
+                                                {product.name} ({product.size}) {
+                                                    product.quantity > 1 && 
+                                                    <div>({product.price} TL/adet)</div>
+                                                }
+                                            </td>
+                                            <td style={{width: "30%"}} colSpan={2}>{product.quantity * product.price} TL</td>
+                                        </tr>
+                                    )
+                                })}
                         </tbody>
                         <tfoot>
                             <tr>
+                                <th></th>
+                                <th></th>
                                 <th>Alt Toplam</th>
-                                <td>150.00 TL</td>
+                                <td>
+                                {cartTotal} TL
+                                </td>
                             </tr>
                             <tr>
+                                <th></th>
+                                <th></th>
                                 <th>Kargo</th>
-                                <td><strong>15.00 TL</strong></td>
+                                <td>{shippingCost} TL</td>
                             </tr>
                             <tr className="order_total">
+                             <th></th>
+                                <th></th>
                                 <th>Sipariş Toplamı </th>
-                                <td><strong>165.00 TL</strong></td>
+                                <td><strong>{totalSum} TL</strong></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -45,40 +68,14 @@ const YourOrder = () => {
                         <div className="accordion" id="accordionExample">
                             <div className="payment_area_wrappers">
                                 <div className="heading_payment" id="headingOne">
-                                    <div className="" data-toggle="collapse" data-target="#collapseOne" >
+                                    <div className="" data-target="#collapseOne" >
                                         <input type="radio" name="payment" id="html" value="HTML" defaultChecked />
-                                        <label htmlFor="html">Para Transferi</label>
+                                        <label htmlFor="html">Banka/Kredi kartı</label>
                                     </div>
                                 </div>
-                                <div id="collapseOne" className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div id="collapseOne"  aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div className="payment_body">
-                                        <p>Direct Bank Transfer</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="payment_area_wrappers">
-                                <div className="heading_payment" id="headingTwo">
-                                    <div className="collapsed" data-toggle="collapse" data-target="#collapseTwo">
-                                        <input type="radio" name="payment" id="javascript" value="JavaScript" />
-                                        <label htmlFor="javascript">Mobile Bankacılık</label>
-                                    </div>
-                                </div>
-                                <div id="collapseTwo" className="collapse" data-parent="#accordionExample">
-                                    <div className="payment_body">
-                                        <p>Direct Mobile Transfer</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="payment_area_wrappers">
-                                <div className="heading_payment" id="headingThree">
-                                    <div className="collapsed" data-toggle="collapse" data-target="#collapseThree">
-                                        <input type="radio" name="payment" id="css" value="JavaScript" />
-                                        <label htmlFor="css">Paypal</label>
-                                    </div>
-                                </div>
-                                <div id="collapseThree" className="collapse" data-parent="#accordionExample">
-                                    <div className="payment_body">
-                                        <p></p>
+                                        <p>İyzico aracılığıyla banka veya kredi kartın ile öde!</p>
                                     </div>
                                 </div>
                             </div>
@@ -87,8 +84,8 @@ const YourOrder = () => {
 
                     <div className="order_button pt-3">
         
-                        <Link to="/order-complete" className="theme-btn-one btn-black-overlay btn_sm">
-                                Sipariş Ver</Link>
+                        <button className="theme-btn-one btn-black-overlay btn_sm" onClick={() => props.paymentFunction()}>
+                                Sipariş Ver</button>
                     </div>
                 </div>
             </div>

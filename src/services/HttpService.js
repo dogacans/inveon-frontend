@@ -1,6 +1,7 @@
 import axios from "axios";
 import userManager from "../utils/userManager"
 // const axios = require("axios");
+import Swal from "sweetalert2";
 
 class HttpService {
     constructor () {
@@ -9,7 +10,7 @@ class HttpService {
         })
 
         this.cartClient = axios.create({
-            baseURL: 'http://localhost:5004/api/cart'
+            baseURL: 'http://localhost:5004/api'
         })
 
         this.reviewsClient = axios.create({
@@ -85,7 +86,7 @@ class HttpService {
     }
 
     async addToCart (productId, size, count) {
-        const response = await this.cartClient.post("AddProductToCart", {
+        const response = await this.cartClient.post("cart/AddProductToCart", {
             productId: productId, 
             size: size, 
             count: count
@@ -94,7 +95,7 @@ class HttpService {
     }
 
     async getCart () {
-        const response = await this.cartClient.get(`GetCart`);
+        const response = await this.cartClient.get(`cart/GetCart`);
         if (response.status === 200) {
             return response.data.result;
         }
@@ -134,7 +135,7 @@ class HttpService {
     }
 
     async deleteFromCart (productId, size) {
-        const response = await this.cartClient.delete(`DeleteProductFromCart`,
+        const response = await this.cartClient.delete(`cart/DeleteProductFromCart`,
             {data: {productId,size}}
         );
         return (response.status === 200 && response.data.isSuccess)
@@ -167,6 +168,36 @@ class HttpService {
         } catch (error) {
             console.error('Error posting review:', error.message);
             throw error;
+        }
+    }
+
+    async createPayment(paymentInfo) {
+        const checkoutHeaderDto = {
+            OrderTotal: paymentInfo.OrderTotal,
+            FirstName: paymentInfo.firstName,
+            LastName: paymentInfo.lastName,
+            Phone: paymentInfo.phoneNumber,
+            Email: paymentInfo.emailAddress,
+            CardNumber: paymentInfo.cardNumber,
+            CVV: paymentInfo.CVV,
+            ExpiryMonth: paymentInfo.ExpiryMonth,
+            ExpiryYear: paymentInfo.ExpiryYear
+          };
+        
+        
+        const response = await this.cartClient.post(`cartc/checkout`, checkoutHeaderDto);
+        if (response.status === 200 && response.data.isSuccess) {
+            return {isSuccess: true};
+        } else {
+            Swal.fire(
+                {
+                    title: 'Hata oluştu!',
+                    text: response.data.errorMessages.join("\n"),
+                    icon: 'error',
+                    showConfirmButton: true,
+                }
+            )
+            return {isSuccess: false, errorMessages: response.data.errorMessages};
         }
     }
 
