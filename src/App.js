@@ -14,6 +14,7 @@ import { userIsLoggedIn } from "./app/slices/user"
 import HttpService from "./services/HttpService";
 import { ccCart, getCart } from "./app/slices/cart";
 import { getFavorites } from "./app/slices/favorites";
+import { fetchProducts } from "./app/slices/product";
 const Fashion = loadable(() => pMinDelay(import('./page/'), 250), { fallback: <Loader /> });
 const Register = loadable(() => pMinDelay(import('./page/register'), 250), { fallback: <Loader /> });
 const ProductDetailsTwos = loadable(() => pMinDelay(import('./page/Product/product-details-two'), 250), { fallback: <Loader /> });
@@ -73,6 +74,9 @@ function App() {
     }, 1000)
     setTimeout(() => {
       dispatch(getFavorites())
+    }, 1000)
+    setTimeout(() => {
+      dispatch(fetchProducts())
     }, 1000)
 
   }, [dispatch])

@@ -86,6 +86,9 @@ const cartSlice = createSlice({
             state.status = 'succeeded'
             // Add any fetched posts to the array
             const {cartItems, products} = action.payload
+            if (!!!cartItems || !cartItems.length) {
+                return;
+            }
             state.products = cartItems.map(item => {
 
                 const product = products.find(product => product.productId === item.productId)

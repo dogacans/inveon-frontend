@@ -1,33 +1,56 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SideBar from './SideBar'
 import ProductCard from '../Common/Product/ProductCard'
 import { useSelector } from "react-redux";
+import { selectAllProducts } from '../../app/slices/product';
+
 const LeftSideBar = () => {
-   
-    const [products, setProducts] = useState(useSelector((state) => state.products.products))
+
+    const productss = useSelector(selectAllProducts)
+
+    const [filteredProducts, setFilteredProducts] = useState(productss)
     const [page, setPage] = useState(1)
+    const [brands, setBrands] = useState(null)
+    const [categories, setCategories] = useState(null)
+
+    useEffect(() => {
+        setFilteredProducts(productss)
+        setBrands(Array.from(new Set(productss.map(product => product.brandName))));
+        setCategories(Array.from(new Set(productss.map(product => product.categoryName))));
+        
+    }, [productss])
+    
     let allData = [...useSelector((state) => state.products.products)];
+
+
 
     const randProduct = (page) => {
         if(page){
             let data = allData.sort((a, b) => 0.5 - Math.random())
             data = data.slice(0,9);
-            setProducts(data);
             setPage(page);
         }
     }
-
+    console.log('products: ', productss);
     return (
         <>
             <section id="shop_main_area" className="ptb-100">
                 <div className="container">
                     <div className="row">
-                        <SideBar filterEvent={randProduct}/>
+                        <SideBar filterEvent={randProduct} 
+                            products={filteredProducts} 
+                            setProducts={setFilteredProducts} 
+                            allProducts={productss}
+                            brands={brands}
+                            categories={categories}
+
+                        
+                        />
                         <div className="col-lg-9">
                             <div className="row">
-                                {products.slice(0,12).map((data, index) => (
-                                    <div className="col-lg-4 col-md-4 col-sm-6 col-12" key={index}>
-                                        <ProductCard data={data} />
+                                {filteredProducts.map(data => (
+                                    <div className="col-lg-4 col-md-4 col-sm-6 col-12" key={data.productId}>
+                                        <ProductCard product={data} />
                                     </div>
                                 ))}
                                 <div className="col-lg-12">

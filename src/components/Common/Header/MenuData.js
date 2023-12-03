@@ -1,14 +1,7 @@
 export const MenuData = [
     {
-        name :"Kategoriler",
-        href:"#!",
-        children : [
-            {
-                name : "Filtrele",
-                href :"/shop/shop-left-sidebar"
-            },
-            
-        ]
+        name :"Tüm ürünler",
+        href:"/shop/shop-left-sidebar"
     },
     {
         name :"Hakkımızda",

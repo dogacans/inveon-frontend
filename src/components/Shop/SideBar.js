@@ -1,168 +1,136 @@
 import React, { useEffect, useState } from 'react'
 // Import Img
 import search from '../../assets/img/svg/search.svg'
-
+import { useSelector } from "react-redux";
+import { selectAllProducts } from '../../app/slices/product';
 
 const SideBar = (props) => {
 
+    const [minPrice, setMinPrice] = useState(0)
+    const [maxPrice, setMaxPrice] = useState(5000)
+    const [currentCategory, setCurrentCategory] = useState("all")
+    const [currentBrand, setCurrentBrand] = useState("all")
+    const [currentColor, setCurrentColor] = useState("all")
+
     useEffect(() => {
-        document.querySelectorAll("input[type='radio']").forEach((input) => {
-            input.addEventListener('change', function () {
-                props.filterEvent(1)
-            });
-        });
+        const filteredProducts = props.allProducts.filter(prod => {
+            const priceInRange = prod.price >= minPrice && prod.price <= maxPrice;
+            const categoryMatch = currentCategory === "all" || prod.categoryName === currentCategory;
+            const brandMatch = currentBrand === "all" || prod.brandName === currentBrand;
+            const colorMatch = currentColor === "all" || prod.color === currentColor;
+        
+            return priceInRange && categoryMatch && brandMatch && colorMatch;
+          });
+        
+          // Set the filtered products in the state
+          props.setProducts(filteredProducts);
 
-        document.querySelector("input[type='range']").addEventListener('change', function (e) {
-            setPrice(e.target.value);
-            props.filterEvent(1);
-        });
+    }, [minPrice, maxPrice, currentColor, currentBrand, currentCategory])
 
-    }, [props])
-
-    const [price, setPrice] = useState(100)
-
+    const clearFilters = () => {
+        setMinPrice(0);
+        setMaxPrice(5000);
+        setCurrentBrand("all");
+        setCurrentCategory("all");
+        setCurrentColor("all")
+    }
+    console.log('props.categories: ', props.categories);
+    console.log('props.brands: ', props.brands);
     return (
         <>
             <div className="col-lg-3">
                 <div className="shop_sidebar_wrapper">
-                    <div className="shop_Search">
-                        <form>
-
-                            <input type="text" className="form-control" placeholder="Ara..." onKeyUp={() => { props.filterEvent(1) }} />
-                            <button><img src={search} alt="img" /></button>
-                        </form>
-                    </div>
+                    <h3>Filtreleme</h3>
                     <div className="shop_sidebar_boxed">
                         <h4>Ürün Kategorileri</h4>
                         <form>
-                            <label className="custom_boxed">Tümü
+                            <label className="custom_boxed" onClick={() => setCurrentCategory("all")}>Tümü
                                 <input type="radio" name="radio" defaultChecked />
                                 <span className="checkmark"></span>
                             </label>
-                            <label className="custom_boxed">T-shirts
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Fashion
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Çanta
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Ceket
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Ayakkabı
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Jeans
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
+                            {
+                                props.categories?.map(category => 
+                                    <label className="custom_boxed" onClick={() => setCurrentCategory(category)}>{category}
+                                        <input type="radio" name="radio" />
+                                        <span className="checkmark"></span>
+                                    </label>
+                                )
+                            }
                         </form>
-                    </div>
-                    <div className="shop_sidebar_boxed">
-                        <h4>Fiyat</h4>
-                        <div className="price_filter">
-                            <input type="range" min="10" max="200" defaultValue={price} className="form-control-range" id="formControlRange" />
-                            <div className="price_slider_amount mt-2">
-                                <span>Fiyat : {price}</span>
-                            </div>
-                        </div>
                     </div>
                     <div className="shop_sidebar_boxed">
                         <h4>Renk</h4>
                         <div className="product-variable-color">
+                            <label htmlFor="modal-product-color-all">
+                                <input name="modal-product-color" id="modal-product-color-all" className="color-select"
+                                    type="radio" onClick={() => setCurrentColor("all")}/>
+                                <span className="product-color-rainbow"></span>
+                            </label>
                             <label htmlFor="modal-product-color-red6">
                                 <input name="modal-product-color" id="modal-product-color-red6" className="color-select"
-                                    type="radio" />
+                                    type="radio" onClick={() => setCurrentColor("Red")}/>
                                 <span className="product-color-red"></span>
-                            </label>
-                            <label htmlFor="modal-product-color-tomato1">
-                                <input name="modal-product-color" id="modal-product-color-tomato1"
-                                    className="color-select" type="radio" />
-                                <span className="product-color-tomato"></span>
                             </label>
                             <label htmlFor="modal-product-color-green2">
                                 <input name="modal-product-color" id="modal-product-color-green2"
-                                    className="color-select" type="radio" defaultChecked />
+                                    className="color-select" type="radio" defaultChecked onClick={() => setCurrentColor("Green")}/>
                                 <span className="product-color-green"></span>
-                            </label>
-                            <label htmlFor="modal-product-color-light-green3">
-                                <input name="modal-product-color" id="modal-product-color-light-green3"
-                                    className="color-select" type="radio" />
-                                <span className="product-color-light-green"></span>
                             </label>
                             <label htmlFor="modal-product-color-blue4">
                                 <input name="modal-product-color" id="modal-product-color-blue4" className="color-select"
-                                    type="radio" />
+                                    type="radio" onClick={() => setCurrentColor("Blue")}/>
                                 <span className="product-color-blue"></span>
                             </label>
-                            <label htmlFor="modal-product-color-light-blue5">
-                                <input name="modal-product-color" id="modal-product-color-light-blue5"
-                                    className="color-select" type="radio" />
-                                <span className="product-color-light-blue"></span>
+                            <label htmlFor="modal-product-color-black4">
+                                <input name="modal-product-color" id="modal-product-color-black4" className="color-select"
+                                    type="radio" onClick={() => setCurrentColor("Black")}/>
+                                <span className="product-color-black"></span>
+                            </label>
+                            <label htmlFor="modal-product-color-brown4">
+                                <input name="modal-product-color" id="modal-product-color-brown4" className="color-select"
+                                    type="radio" onClick={() => setCurrentColor("Brown")}/>
+                                <span className="product-color-brown"></span>
+                            </label>
+                            <label htmlFor="modal-product-color-yellow4">
+                                <input name="modal-product-color" id="modal-product-color-yellow4" className="color-select"
+                                    type="radio" onClick={() => setCurrentColor("Yellow")}/>
+                                <span className="product-color-yellow"></span>
+                            </label>
+                            <label htmlFor="modal-product-color-orange4">
+                                <input name="modal-product-color" id="modal-product-color-orange" className="color-select"
+                                    type="radio" onClick={() => setCurrentColor("Orange")}/>
+                                <span className="product-color-orange"></span>
                             </label>
                         </div>
                     </div>
                     <div className="shop_sidebar_boxed">
-                        <h4>Boyut</h4>
-                        <form id="sizes_input">
-                            <label className="custom_boxed">XS
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">S
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">M
-                                <input type="radio" name="radio" defaultChecked />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">L
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">XL
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                        </form>
+                        <h4>Fiyat</h4>
+                        <div className="price_filter">
+                            <label>Min fiyat:</label>
+                            <input type="text" defaultValue={minPrice} className="form-control-range" id="formControlRange" 
+                            onChange={(e) => setMinPrice(parseInt(e.target.value ?? 0))}
+                            />
+                            <label>Max fiyat:</label>
+                            <input type="text" defaultValue={maxPrice} className="form-control-range" id="formControlRange" 
+                            onChange={(e) => setMaxPrice(parseInt(e.target.value ?? 5000))}
+                            />
+                        </div>
                     </div>
                     <div className="shop_sidebar_boxed">
                         <h4>Marka</h4>
                         <form>
-                            <label className="custom_boxed">Next
-                                <input type="radio" name="radio" />
+                            <label className="custom_boxed" onClick={() => setCurrentBrand("all")}>Tümü
+                                <input type="radio" name="radio" defaultChecked/>
                                 <span className="checkmark"></span>
                             </label>
-                            <label className="custom_boxed">Adidas
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Calvin Klein
-                                <input type="radio" name="radio" defaultChecked />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Nike
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Geox
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
-                            <label className="custom_boxed">Vakko
-                                <input type="radio" name="radio" />
-                                <span className="checkmark"></span>
-                            </label>
+                            {props.brands?.map(brand =>
+                                <label className="custom_boxed" onClick={() => setCurrentBrand(brand)}>{brand}
+                                    <input type="radio" name="radio" />
+                                    <span className="checkmark"></span>
+                                </label>
+                            )}
                             <div className="clear_button">
-                                <button className="theme-btn-one btn_sm btn-black-overlay" type="button" onClick={() => { props.filterEvent(1) }}>Filtreyi Temizle</button>
+                                <button className="theme-btn-one btn_sm btn-black-overlay" type="button" onClick={() => clearFilters() }>Filtreyi Temizle</button>
                             </div>
                         </form>
                     </div>
