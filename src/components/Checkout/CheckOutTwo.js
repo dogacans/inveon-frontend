@@ -4,7 +4,7 @@ import YourOrder from './YourOrder'
 import { useRef, useEffect, useState } from 'react'
 import HttpService from '../../services/HttpService'
 import { selectTotalCartCost } from '../../app/slices/cart'
-import {useSelector} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import { useNavigate } from "react-router-dom";
 
 const CheckOutTwo = () => {
@@ -13,7 +13,7 @@ const CheckOutTwo = () => {
     const informationForm = useRef()
     const [paymentSuccess, setPaymentSuccess] = useState(null)
     const navigate = useNavigate();
-
+    const dispatch = useDispatch()
     const createPayment = async () => {
         console.debug("CreatePayment clicked.")
         const formElements = informationForm.current.elements;
@@ -28,6 +28,7 @@ const CheckOutTwo = () => {
         console.log('paymentInformation: ', paymentInformation);
         const result = await HttpService.createPayment(paymentInformation);
         if (result.isSuccess) {
+            dispatch({type: "cart/clearCart"})
             navigate("/order-complete")
         }
         setPaymentSuccess(result);

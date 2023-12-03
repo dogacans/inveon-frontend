@@ -74,7 +74,8 @@ const cartSlice = createSlice({
         },
         //sepeti comple silmek için
         clearCart: (state) => {
-            state.products = []
+            state.products = [];
+            state.status = 'idle';
         },
     },
     extraReducers(builder) {

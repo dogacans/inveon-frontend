@@ -81,7 +81,7 @@ const WishArea = () => {
                                 <div className="empaty_cart_area">
                                     <img src={img} alt="img" />
                                     <h2>Favoriniz YOK</h2>
-                                    <Link to="/shop" className="btn btn-black-overlay btn_sm">Alışverişe Devam</Link>
+                                    <Link to="/shop/shop-left-sidebar" className="btn btn-black-overlay btn_sm">Alışverişe Devam</Link>
                                 </div>
                             </div>
                         </div>

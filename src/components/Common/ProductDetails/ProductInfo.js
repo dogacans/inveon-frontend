@@ -9,10 +9,6 @@ const ProductInfo = ({productId}) => {
     const [comment, setComment] = useState('');
     const { reviews, status, error } = useSelector((state) => state.reviews);
     const ReviewData = reviews ?? [];
-
-    useEffect(() => {
-        dispatch(fetchReviews(productId));
-    }, [dispatch]);
     
     const handleRatingChange = (event) => {
         setRating(parseInt(event.target.value, 10));
@@ -78,21 +74,21 @@ const ProductInfo = ({productId}) => {
                             </div>
                             <div id="review" className="tab-pane fade">
                             <div className="review-form">
-                                <h2>Write a Review</h2>
+                                <h2>Ürünü Değerlendirin</h2>
                                 <form onSubmit={handleSubmit}>
                                     <div className='d-flex flex-column mt-3'>
-                                    <label htmlFor="rating">Rating:</label>
+                                    <label htmlFor="rating">Puan:</label>
                                     <select id="rating" value={rating} onChange={handleRatingChange}>
-                                        <option value={0}>Select Rating</option>
-                                        <option value={1}>1 - Poor</option>
-                                        <option value={2}>2 - Fair</option>
-                                        <option value={3}>3 - Good</option>
-                                        <option value={4}>4 - Very Good</option>
-                                        <option value={5}>5 - Excellent</option>
+                                        <option value={0}>Puan Seçin</option>
+                                        <option value={1}>1 - Çok kötü</option>
+                                        <option value={2}>2 - Kötü</option>
+                                        <option value={3}>3 - İyi</option>
+                                        <option value={4}>4 - Çok İyi</option>
+                                        <option value={5}>5 - Mükemmel</option>
                                     </select>
                                     </div>
                                     <div className='d-flex flex-column mt-3'>
-                                    <label htmlFor="comment">Comment:</label>
+                                    <label htmlFor="comment">Yorum:</label>
                                     <textarea
                                         id="comment"
                                         value={comment}
@@ -100,13 +96,13 @@ const ProductInfo = ({productId}) => {
                                         rows={4}
                                     ></textarea>
                                     </div>
-                                    <button type="submit" className='mt-3'>Submit Review</button>
+                                    <button type="submit" className='mt-3'>Yorumu Gönder</button>
                                 </form>
                             </div>  
                                 <div className="product_reviews">
                                     {!!ReviewData.length &&
                                         <ul>
-                                            <li>Here are the reviews:</li>
+                                            <li><h3>Diğer müşterilerin yorumları:</h3></li>
                                             {ReviewData.map((data, index) => (
                                                 <li className="media" key={index}>
                                                     <div className="media-img">
@@ -115,7 +111,8 @@ const ProductInfo = ({productId}) => {
                                                     <div className="media-body">
                                                         <div className="media-header">
                                                             <div className="media-name">
-                                                                <h4>{data.userId}</h4>
+                                                                <h4>{data.userName || "Bilinmeyen Kullanıcı"}</h4>
+                                                                {/* <h4>{data.userId}</h4> */}
                                                                 <p>{new Date(data.timestamp).toLocaleDateString()}</p>
                                                             </div>
                                                             <div className="product_review_strat d-flex">
@@ -124,7 +121,7 @@ const ProductInfo = ({productId}) => {
                                                             </div>
                                                         </div>
                                                         <div className="media-pragraph">
-                                                            <p>{data.comment}</p>
+                                                            <div>{data.comment}</div>
                                                         </div>
                                                     </div>
                                                 </li>

@@ -21,6 +21,10 @@ class HttpService {
             baseURL: 'http://localhost:5008/api'
         })
 
+        this.registerClient = axios.create({
+            baseURL: 'http://localhost:5002/'
+        })
+
         this.access_token = null;
         
         this.cartClient.interceptors.request.use(async (config) => {
@@ -205,6 +209,31 @@ class HttpService {
         const user = await userManager.getUser();
         this.access_token = user.access_token;
         this.cartClient.defaults.headers['Authorization'] = `Bearer ${this.access_token}`
+    }
+
+    async register (user, email, pass, firstName, lastName) {
+        const postData = { 
+            "ReturnUrl": "http://localhost:3000",
+            "Username": user,
+            "Email": email,
+            "FirstName": firstName,
+            "LastName": lastName,
+            "Password": pass
+        }
+        let response;
+        
+        try {
+            response = await this.registerClient.post("Account/Register", postData);
+            if (response.status === 200) {
+                return response;
+            }
+            else {
+                return "Lütfen farklı bir kullanıcı adı deneyin!"
+            }
+        }
+        catch (e) {
+            return e
+        }
     }
 }
 

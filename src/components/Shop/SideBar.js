@@ -63,42 +63,42 @@ const SideBar = (props) => {
                         <div className="product-variable-color">
                             <label htmlFor="modal-product-color-all">
                                 <input name="modal-product-color" id="modal-product-color-all" className="color-select"
-                                    type="radio" onClick={() => setCurrentColor("all")}/>
+                                    type="radio" onClick={() => setCurrentColor("all")} defaultChecked/>
                                 <span className="product-color-rainbow"></span>
                             </label>
                             <label htmlFor="modal-product-color-red6">
                                 <input name="modal-product-color" id="modal-product-color-red6" className="color-select"
-                                    type="radio" onClick={() => setCurrentColor("Red")}/>
+                                    type="radio" onClick={() => setCurrentColor("Kırmızı")}/>
                                 <span className="product-color-red"></span>
                             </label>
                             <label htmlFor="modal-product-color-green2">
                                 <input name="modal-product-color" id="modal-product-color-green2"
-                                    className="color-select" type="radio" defaultChecked onClick={() => setCurrentColor("Green")}/>
+                                    className="color-select" type="radio"  onClick={() => setCurrentColor("Yeşil")}/>
                                 <span className="product-color-green"></span>
                             </label>
                             <label htmlFor="modal-product-color-blue4">
                                 <input name="modal-product-color" id="modal-product-color-blue4" className="color-select"
-                                    type="radio" onClick={() => setCurrentColor("Blue")}/>
+                                    type="radio" onClick={() => setCurrentColor("Mavi")}/>
                                 <span className="product-color-blue"></span>
                             </label>
                             <label htmlFor="modal-product-color-black4">
                                 <input name="modal-product-color" id="modal-product-color-black4" className="color-select"
-                                    type="radio" onClick={() => setCurrentColor("Black")}/>
+                                    type="radio" onClick={() => setCurrentColor("Siyah")}/>
                                 <span className="product-color-black"></span>
                             </label>
                             <label htmlFor="modal-product-color-brown4">
                                 <input name="modal-product-color" id="modal-product-color-brown4" className="color-select"
-                                    type="radio" onClick={() => setCurrentColor("Brown")}/>
+                                    type="radio" onClick={() => setCurrentColor("Kahverengi")}/>
                                 <span className="product-color-brown"></span>
                             </label>
                             <label htmlFor="modal-product-color-yellow4">
                                 <input name="modal-product-color" id="modal-product-color-yellow4" className="color-select"
-                                    type="radio" onClick={() => setCurrentColor("Yellow")}/>
+                                    type="radio" onClick={() => setCurrentColor("Sarı")}/>
                                 <span className="product-color-yellow"></span>
                             </label>
                             <label htmlFor="modal-product-color-orange4">
                                 <input name="modal-product-color" id="modal-product-color-orange" className="color-select"
-                                    type="radio" onClick={() => setCurrentColor("Orange")}/>
+                                    type="radio" onClick={() => setCurrentColor("Turuncu")}/>
                                 <span className="product-color-orange"></span>
                             </label>
                         </div>

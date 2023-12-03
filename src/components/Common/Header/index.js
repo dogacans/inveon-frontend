@@ -9,19 +9,25 @@ import svg from '../../../assets/img/svg/cancel.svg'
 import logoWhite from '../../../assets/img/logo-white.png'
 import svgsearch from '../../../assets/img/svg/search.svg'
 import Swal from 'sweetalert2'
-import { selectAllCartItems } from '../../../app/slices/cart';
+import { selectAllCartItems, selectTotalCartCost } from '../../../app/slices/cart';
 import { removeFromFavorites, selectAllFavorites } from '../../../app/slices/favorites';
 import { deleteFromCart } from '../../../app/slices/cart';
 
 const Header = () => {
 
     let carts = useSelector(selectAllCartItems);
+    let cartCost = useSelector(selectTotalCartCost);
     console.log("Carts: ", carts);
     let favorites = useSelector(selectAllFavorites);
     console.log('favorites: ', favorites);
     const [click, setClick] = useState(false);
     const history = useNavigate();
     let dispatch = useDispatch();
+
+    function getRandomImageUrl() {
+        const x = Math.floor(Math.random() * 20) + 1;
+        return `/pictures/${x}.jpg`;
+      }
 
     const rmCartProduct = (id, size) => {
         dispatch(deleteFromCart(id, size))
@@ -304,14 +310,14 @@ const Header = () => {
                         {carts.map((data, index) => (
                             <li className="offcanvas-wishlist-item-single" key={index}>
                                 <div className="offcanvas-wishlist-item-block">
-                                    <Link to={`/product-details-two/${data.id}`}
+                                    <Link to={`/product-details-two/${data.productId}`}
                                         className="offcanvas-wishlist-item-image-link" >
-                                        <img src={data.img} alt="img"
+                                        <img src={getRandomImageUrl()} alt="img"
                                             className="offcanvas-wishlist-image" />
                                     </Link>
                                     <div className="offcanvas-wishlist-item-content">
-                                        <Link to={`/product-details-two/${data.id}`}
-                                            className="offcanvas-wishlist-item-link">{data.title}</Link>
+                                        <Link to={`/product-details-two/${data.productId}`}
+                                            className="offcanvas-wishlist-item-link">{data.name}</Link>
                                         <div className="offcanvas-wishlist-item-details">
                                             <span className="offcanvas-wishlist-item-details-quantity">
                                                 {data.quantity || 1} x
@@ -331,7 +337,7 @@ const Header = () => {
                     </ul>
                     <div className="offcanvas-cart-total-price">
                         <span className="offcanvas-cart-total-price-text">Toplam :</span>
-                        <span className="offcanvas-cart-total-price-value">{cartTotal()} TL</span>
+                        <span className="offcanvas-cart-total-price-value">{Number((cartTotal()).toFixed(2))} TL</span>
                     </div>
                     <ul className="offcanvas-cart-action-button">
                         <li>
@@ -357,22 +363,18 @@ const Header = () => {
                     <h4 className="offcanvas-title">Favoriler</h4>
 
                     <ul className="offcanvas-wishlist">
-                        {favorites.map((data, index) => (
-                            <li className="offcanvas-wishlist-item-single" key={index}>
+                        {favorites.map(data => (
+                            <li className="offcanvas-wishlist-item-single" key={data.productId}>
                                 <div className="offcanvas-wishlist-item-block">
-                                    <Link to={`/product-details-one/${data.id}`}
+                                    <Link to={`/product-details-one/${data.productId}`}
                                         className="offcanvas-wishlist-item-image-link" >
-                                        <img src={data.img} alt="img"
+                                        <img src={getRandomImageUrl()} alt="img"
                                             className="offcanvas-wishlist-image" />
                                     </Link>
                                     <div className="offcanvas-wishlist-item-content">
-                                        <Link to={`/product-details-one/${data.id}`}
-                                            className="offcanvas-wishlist-item-link">{data.title}</Link>
+                                        <Link to={`/product-details-one/${data.productId}`}
+                                            className="offcanvas-wishlist-item-link">{data.name}</Link>
                                         <div className="offcanvas-wishlist-item-details">
-                                            <span className="offcanvas-wishlist-item-details-quantity">1 x
-                                            </span>
-                                            <span className="offcanvas-wishlist-item-details-price">
-                                                {data.price}</span>
                                         </div>
                                     </div>
                                 </div>

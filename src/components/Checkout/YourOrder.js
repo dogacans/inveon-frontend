@@ -8,6 +8,10 @@ const YourOrder = (props) => {
     const cartTotal = useSelector(selectTotalCartCost)
     const shippingCost = 15.00;
     const totalSum = Number((cartTotal + shippingCost).toFixed(2))
+    function getRandomImageUrl() {
+        const x = Math.floor(Math.random() * 20) + 1;
+        return `/pictures/${x}.jpg`;
+      }
 
     return (
         <>
@@ -27,7 +31,9 @@ const YourOrder = (props) => {
                                 {cartProducts.map(product => {
                                     return (
                                         <tr>
-                                            <td style={{width: "30%"}}className='col-2' colSpan={1}>{product.quantity} </td>
+                                            <td style={{width: "30%"}}className='col-2' colSpan={1}>{product.quantity} 
+                                                <img src={getRandomImageUrl()}></img>
+                                            </td>
                                             <td style={{width: "40%"}}colSpan={2}>
                                                 {product.name} ({product.size}) {
                                                     product.quantity > 1 && 

@@ -31,7 +31,7 @@ const TopHeader = () => {
                     <div className="row">
                         <div className="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div className="top_header_left">
-                                <p>Özel koleksiyonlar için...<Link to="/shop">Daha fazlası...</Link></p>
+                                <p>Özel koleksiyonlar için...<Link to="/shop/shop-left-sidebar">Daha fazlası...</Link></p>
                             </div>
                         </div>
                         <div className="col-lg-6 col-md-6 col-sm-12 col-12">

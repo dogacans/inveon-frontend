@@ -2,48 +2,54 @@ import React, {useState} from 'react'
 import { useSelector, useDispatch } from "react-redux";
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom"
-
+import httpClient from "../../services/HttpService"
+import userManager from '../../utils/userManager';
 const RegisterArea = () => {
     let dispatch = useDispatch();
     const history = useNavigate()
     const [user, setUser] = useState('')
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
-
-    let status = useSelector((state) => state.user.status);
-    let userData = useSelector((state) => state.user.user);
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
 
     // Add to cart
-    const register = () => {
-        if(status){
-            Swal.fire({
-                icon: 'question',
-                title: ''+userData.name,
-                html:
-                    'Zaten Kayıtlısınız<br />' +
-                    ' <b>' +
-                    'Dashboard</b> ' +
-                    '<b>Shop</b>',
-            }).then((result) => {
-                if(result.isConfirmed) {
-                  history.push('/my-account')
-                } else {
-                  // not clicked
+    const register = async () => {
+        const result = await httpClient.register(user, email, pass, firstName, lastName);
+        if (result.status === 200) {
+            Swal.fire(
+                {
+                    title: 'Başarılı',
+                    text: "Başarıyla kayıt oldunuz.",
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000
                 }
-              });
-        }else{
-            dispatch({ type: "user/register", payload: { user, email, pass } })
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Kayıt Başarılı',
-                text: 'Hoş geldiniz '+user
+            )
+            userManager.getUser()
+            .then(async data => {
+                if (data) {
+                let d = JSON.stringify(data);
+                let f = JSON.parse(d);
+                dispatch({ type: "user/login", payload: { user: f, status: true} })
+                }
             })
-            history("/my-account");
-        }
         
-
+            history("/")
+        }
+        else {
+            Swal.fire(
+                {
+                    title: ':(',
+                    text: `Hata! ${"Lütfen farklı bir kullanıcı adı deneyin!"}`,
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000
+                }
+            )
+        }
     }
+        
     return (
         <>
             <section id="login_area" className="ptb-100">
@@ -56,6 +62,14 @@ const RegisterArea = () => {
                                     <div className="default-form-box">
                                         <label>Kullanıcı Adı<span className="text-danger">*</span></label>
                                         <input type="text" className="form-control" value={user} onChange={e => setUser(e.currentTarget.value)} required/>
+                                    </div>
+                                    <div className="default-form-box">
+                                        <label>İsim<span className="text-danger">*</span></label>
+                                        <input type="text" className="form-control" value={firstName} onChange={e => setFirstName(e.currentTarget.value)} required/>
+                                    </div>
+                                    <div className="default-form-box">
+                                        <label>Soyisim<span className="text-danger">*</span></label>
+                                        <input type="text" className="form-control" value={lastName} onChange={e => setLastName(e.currentTarget.value)} required/>
                                     </div>
                                     <div className="default-form-box">
                                         <label>Email<span className="text-danger">*</span></label>

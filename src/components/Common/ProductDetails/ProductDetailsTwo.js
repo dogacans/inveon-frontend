@@ -12,6 +12,7 @@ import { fetchProductById, selectProductById }  from "../../../app/slices/produc
 import { addToCart } from '../../../app/slices/cart';
 import Swal from "sweetalert2";
 import { addToFavorites, removeFromFavorites, selectAllFavorites } from '../../../app/slices/favorites';
+import {fetchReviews} from "../../../app/slices/reviews" 
 
 const ProductDetailsTwo = () => {
 
@@ -25,6 +26,14 @@ const ProductDetailsTwo = () => {
     const productStatus = useSelector(state => state.products.singleProductStatus)
     const favorites = useSelector(selectAllFavorites)
     const user = useSelector(state => state.user.user)
+    const [photoUrl, setPhotoUrl] = useState(getRandomImageUrl())
+    console.log('photoUrl: ', photoUrl);
+    const { reviews, status, error } = useSelector((state) => state.reviews);
+    const ReviewData = reviews ?? [];
+
+    useEffect(() => {
+        dispatch(fetchReviews(id));
+    }, [dispatch]);
 
     useEffect(() => {
         if ((productStatus === 'idle' && !product) || (product !== null && product.id !== id && productStatus === 'succeeded')) {
@@ -38,7 +47,7 @@ const ProductDetailsTwo = () => {
     const [count, setCount] = useState(1)
 
     const incNum = () => {
-        if (count + 1 <= 5) { // TODO replace by stock count
+        if (count + 1 <= productStock.find(s => s.size === size)?.stockQuantity) { // TODO replace by stock count
             setCount(count + 1)
         }
         else {
@@ -50,6 +59,10 @@ const ProductDetailsTwo = () => {
             setCount(count - 1)
     }
 
+    function getRandomImageUrl() {
+        const x = Math.floor(Math.random() * 20) + 1;
+        return `/pictures/${x}.jpg`;
+      }
     // Add to cart
     const addProductToCart = async (id, size, count) => {
         console.log('size: ', size);
@@ -112,10 +125,10 @@ const ProductDetailsTwo = () => {
                             <div className="product_single_two_img slider-for">
                                 <Slider {...settings}>
                                     <div className="product_img_two_slider">
-                                        <img src={product.imageUrls.split(";")[0]} alt="img" />
+                                        <img src={photoUrl} alt="img" />
                                     </div>
                                     <div className="product_img_two_slider">
-                                        <img src={product.imageUrls.split(";")[0]} alt="img" />
+                                        <img src={photoUrl} alt="img" />
                                     </div>
                                     {/* {
                                         product.color.map(item => (
@@ -133,8 +146,10 @@ const ProductDetailsTwo = () => {
                                 <div className="modal_product_content_one">
                                     <h3>{product.name}</h3>
                                     <div className="reviews_rating">
-                                        <RatingStar maxScore={5} rating={4} id="rating-star-common-2" />
-                                        <span>({1111} Müşteri Yorumları)</span>
+                                        <RatingStar maxScore={5} 
+                                        rating={reviews.reduce((prev, current) => prev + current.rating, 0) / reviews.length} 
+                                        id="rating-star-common-2" />
+                                        <span>({reviews.length} Müşteri Yorumları)</span>
                                     </div>
                                     <h4>{product.price} {product.currencyType} <del>{parseInt(product.price) + 17}.00 TL</del> </h4>
                                     <p>{product.description}</p>
@@ -154,26 +169,6 @@ const ProductDetailsTwo = () => {
                                                 })
                                             }
                                         </select>
-                                    </div>
-                                    <div className="variable-single-item">
-                                        <span>Renk</span>
-                                        <div className="product-variable-color">
-                                            <label htmlFor="modal-product-color-red1">
-                                                <input name="modal-product-color" id="modal-product-color-red1"
-                                                    className="color-select" type="radio" defaultChecked/>
-                                                <span className="product-color-red"></span>
-                                            </label>
-                                            <label htmlFor="modal-product-color-green3">
-                                                <input name="modal-product-color" id="modal-product-color-green3"
-                                                    className="color-select" type="radio" />
-                                                <span className="product-color-green"></span>
-                                            </label>
-                                            <label htmlFor="modal-product-color-blue5">
-                                                <input name="modal-product-color" id="modal-product-color-blue5"
-                                                    className="color-select" type="radio" />
-                                                <span className="product-color-blue"></span>
-                                            </label>
-                                        </div>
                                     </div>
                                     <form id="product_count_form_two">
                                         <div className="product_count_one">
@@ -218,7 +213,7 @@ const ProductDetailsTwo = () => {
                         <div className="empaty_cart_area">
                             <img src={"cannot_find.jpeg"} alt="img" />
                             <h2>Ürün Bulunamadı</h2>
-                            <Link to="/shop" className="btn btn-black-overlay btn_sm">Alışverişe Devam</Link>
+                            <Link to="/shop/shop-left-sidebar" className="btn btn-black-overlay btn_sm">Alışverişe Devam</Link>
                         </div>
                     </div>
                 </div>
